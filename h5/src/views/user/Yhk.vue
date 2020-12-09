@@ -1,13 +1,52 @@
 <template>
 
   <div>
-    <img  src="http://meida.lxt7.cn//addons/sjlm_tg/template/mobile/images/Icon_left1_arrow.png" onclick="javascript:history.go(-1)" style="width: .5rem;height:.5rem; margin-left:0.3rem;margin-top:0.2rem">
+    <img  src="../../assets/images/call_back.png" onclick="javascript:history.go(-1)" style="width: .5rem;height:.5rem; margin-left:0.3rem;margin-top:0.2rem">
 
-    <div style="display: flex;justify-content: center;align-items: start;flex-direction: column;margin-top: 50%;margin-left: 25%">
-      <span style="margin-bottom: 30px">卡号: 6222 6208 1002 7727 078</span>
-      <span style="margin-bottom: 30px">开户行: 交通银行</span>
-      <span>持卡人:张林</span>
-    </div>
+    <div class="personal" style="margin-top:50px">
+		    <form action="dorecharge" id="with-drawForm" method="post">
+			
+				<div class="boxflex1 mt10 clearfloat">
+			        <div class="withdrawal-name">收款账号：</div>
+			        <div class="withdrawal-con">
+			            <div class="form-group field-userwithdraw-amount required">
+                            {{bank_code}}
+						</div>        
+					</div>
+			    </div>
+			    <div class="boxflex1 none clearfloat">
+			        <div class="withdrawal-name">收款人：</div>
+			        <div class="withdrawal-con">
+                        <div class="form-group field-userwithdraw-amount required">
+							{{bank_user}}
+                        </div>          
+					</div>
+			    </div>
+			    <div style="" class="boxflex1 none clearfloat">
+				<div class="withdrawal-name">开户行：</div>
+				<div class="withdrawal-con">
+					<div class="form-group field-userwithdraw-amount required">
+						{{bank_name}}
+					</div>
+				</div>
+			</div>
+				<div class="boxflex1 none clearfloat">
+					<div class="withdrawal-name">充值金额:</div>
+					<div class="withdrawal-con">
+
+						<div class="form-group field-userwithdraw-amount required">
+						{{money}}						</div>
+					</div>
+				</div>
+
+
+			
+				 <div style="width: 100%;display:flex;justify-content: center;margin-top: 5%">
+					 <button id="submitBtn" @click="apply" type="button"  style="text-align: center;background: #fe5153;color: white;border: none">已转账成功，提交充值申请</button>
+				 </div>
+			    
+			</form>
+		</div>
   </div>
 </template>
 <script>
@@ -17,7 +56,9 @@
     loginMobile,
     registerVerify,
     register,
-    getCodeApi
+    getCodeApi,
+    getBankInfo,
+    applyRecharge
   } from "@api/user";
   import attrs, { required, alpha_num, chs_phone,is_agreed } from "@utils/validate";
   import { validatorDefaultCatch } from "@utils/dialog";
@@ -45,10 +86,17 @@
         codeVal: "",
         invite_code: "",
         isShowCode: false,
-        is_agree:false
+        is_agree:false,
+        money:0,
+        bank_user:"",
+        bank_name:"",
+        bank_code:""
+        
       };
     },
     mounted: function() {
+      this.money = this.$route.params.money;
+      this.getBank()
       this.getCode();
       this.getLogoImage();
       this.invite_code = this.getQueryVariable('code')?this.getQueryVariable('code'):'';
@@ -62,6 +110,19 @@
     },
     methods: {
 
+      apply:function(){
+          var that = this;
+            applyRecharge({money:that.money})
+                .then(res => {
+                 this.$dialog.success("申请成功");
+                 this.$router.push({
+            path: `/`,
+        })
+                })
+                .catch(res => {
+                  this.$dialog.error(res.msg);
+                }); 
+      }, 
       handleDisabled:function(){
         this.is_agree = !this.is_agree;
         if(this.is_agree===true){
@@ -88,6 +149,18 @@
                 "key=" +
                 this.keyCode +
                 Date.parse(new Date());
+      },
+      getBank(){
+          var that = this
+         getBankInfo()
+                .then(res => {
+                  that.bank_code = res.data.bank_code;
+                  that.bank_name = res.data.bank_name;
+                  that.bank_user = res.data.bank_user;
+                })
+                .catch(res => {
+                  this.$dialog.error(res.msg);
+                }); 
       },
       getCode() {
         getCodeApi()
@@ -285,4 +358,72 @@
     width: 100%;
     height: 100%;
   }
+  
+  .personal {
+    max-width: 640px;
+    min-width: 320px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.withdrew_body .boxflex1 {
+    padding: 5px 10px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background: #fff;
+    font-size: 14px;
+}
+
+.withdrawal-name {
+    text-align: right;
+    padding-right: 20px;
+}
+.withdrawal-name {
+    width: 25%;
+    float: left;
+    font-size: 12px;
+    color: #333;
+    line-height: 28px;
+}
+.withdrawal-con {
+    width: 75%;
+    float: left;
+}
+
+.required {
+    line-height: 30px;
+    height: 30px;
+}
+
+.mui-btn, button, input[type="button"], input[type="reset"], input[type="submit"] {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 0;
+    padding: 6px 12px;
+    cursor: pointer;
+    -webkit-transition: all;
+    transition: all;
+        transition-duration: 0s;
+        transition-timing-function: ease;
+    -webkit-transition-timing-function: linear;
+    transition-timing-function: linear;
+    -webkit-transition-duration: .2s;
+    transition-duration: .2s;
+    text-align: center;
+    vertical-align: top;
+    white-space: nowrap;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    background-clip: padding-box;
+}
+  
 </style>

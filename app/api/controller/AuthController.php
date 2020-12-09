@@ -37,8 +37,8 @@ class AuthController
     
     public function setUserInfo (Request $result){
         
-        $app_id = "wxdf9e27fa6256cf5a";
-        $appsecret = "fd849b798447bd123d1337eebfe16fd3";
+        $app_id = "wx7c6fa4f220b4ea33";
+        $appsecret = "4d30aa7c2d0da14661cb751b0d244eb2";
         $code = $_GET["code"];
         $url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid='.$app_id.'&secret='.$appsecret.'&code='.$code.'&grant_type=authorization_code';
 		$json = file_get_contents($url);
@@ -60,9 +60,25 @@ class AuthController
 		return app('json')->success('登录成功',["msg"=>$arr]);
 		
     }
-
+private function checkSignature()
+  {
+    #注意： 这里可以不用检验$_GET参数的有效性，因为微信一定会传相关的参数给你的服务器的，你直接开启验证模式即可。
+    $signature = $_GET['signature'];
+    $timestamp = $_GET['imestamp'];
+    $nonce = $_GET['nonce'];
+    $token = "123456";
+    $tmpArr = array($token, $timestamp, $nonce);
+    sort($tmpArr, SORT_STRING);
+    $tmpStr = implode( $tmpArr );
+    $tmpStr = sha1( $tmpStr );
+    if( $tmpStr === $signature ){
+      return true;
+    }else{
+      return false;
+    }
+  }
     public function notify(){
-
+      
         $order_no = $_POST["order_no"];
         $subject = $_POST["subject"];
         $pay_type = $_POST["pay_type"];
@@ -563,4 +579,13 @@ class AuthController
         shuffle($return);
         return $return[array_rand($return)];
     }
+    
+    
+    public function getBankInfo(){
+        $bakn_user = sys_config("bank_user");
+        $bakn_name = sys_config("bank_name");
+        $bakn_code = sys_config("bank_code");
+        return app('json')->success("",["bank_user"=>$bakn_user,"bank_name"=>$bakn_name,"bank_code"=>$bakn_code]);
+    }
+    
 }

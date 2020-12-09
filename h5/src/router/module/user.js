@@ -245,7 +245,7 @@ export default [
     component: () => import("@views/user/Recharge.vue")
   },
   {
-    path: "/user/pay",
+    path: "/user/pay/:money",
     name: "Recharge",
     meta: {
       title: "银行卡充值",

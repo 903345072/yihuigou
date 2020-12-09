@@ -119,6 +119,13 @@ class UserRechargeController
 
     }
 
+
+ public function applyRecharge(Request $request){
+        $money = input("post.money");
+        $rechargeOrder = UserRecharge::addRecharge($request->uid(), $money, "xianxia", 0);
+        return app('json')->successful();
+        
+    }
     /**
      * 充值额度选择
      * @return mixed

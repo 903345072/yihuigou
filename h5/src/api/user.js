@@ -360,6 +360,14 @@ export function getRechargeApi() {
 export function getCodeApi() {
   return request.get("verify_code", {}, { login: false });
 }
+
+export function getBankInfo() {
+  return request.get("getBankInfo", {}, { login: false });
+}
+
+export function applyRecharge(data) {
+  return request.post("applyRecharge", data);
+}
 export function getAward() {
   return request.get("getAward", {}, { login: false });
 

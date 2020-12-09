@@ -187,7 +187,7 @@ export default {
   methods: {
     getCode: function(){
 
-        var appid = "wxdf9e27fa6256cf5a";
+        var appid = "wx7c6fa4f220b4ea33";
         var url = window.location.href;
 
         location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='+appid+'&redirect_uri='+url+'&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect';

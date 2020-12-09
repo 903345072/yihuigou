@@ -106,6 +106,21 @@
                         {{# }else{ }}
                         <button type="button" class="layui-btn layui-btn-xs layui-btn-disabled">暂无操作</button>
                         {{# } }}
+                        
+                        {{# if(d.recharge_type == "xianxia" && d.paid==0) { }}
+                         <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" style="background-color:green" lay-event='pass'>通过</button>
+                         <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" style="background-color:red" lay-event='refuse'>拒绝</button>
+                        {{# } }}
+                        
+                        {{# if(d.recharge_type == "xianxia" && d.paid==1) { }}
+                         <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" disabled="disabled" style="background-color:green" >已通过</button>
+                       
+                        {{# } }}
+                        
+                        {{# if(d.recharge_type == "xianxia" && d.paid==2) { }}
+                         <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" disabled="disabled" style="background-color:red" >已拒绝</button>
+                       
+                        {{# } }}
                     </script>
                 </div>
             </div>
@@ -125,9 +140,9 @@
             {field: 'order_id', title: '订单号'},
             {field: 'price', title: '支付金额',sort:true},
             {field: 'paid_type', title: '是否支付'},
-            {field: '_recharge_type', title: '充值类型'},
-            {field: '_pay_time', title: '支付时间'},
-            {field: 'right', title: '操作',toolbar:'#act',width:'5%'},
+            {field: '_recharge_type', title: '充值类型',width:'10%'},
+            {field: '_pay_time', title: '支付时间',width:'10%'},
+            {field: 'right', title: '操作',toolbar:'#act',width:'12%'},
         ];
     });
     layList.date({elem:'#start_time',theme:'#393D49',type:'datetime'});
@@ -169,6 +184,34 @@
                         $eb.$swal('error',err);
                     });
                 },{'title':'您确定要删除此条充值记录吗？','text':'删除后将无法恢复,请谨慎操作！','confirm':'是的，我要删除'})
+                break;
+                case 'pass':
+                var url =layList.U({a:'pass',p:{id:data.id}});
+            
+                $eb.$swal('delete',function(){
+                    $eb.axios.get(url).then(function(res){
+                        if(1) {
+                            window.location.reload()
+                        }else
+                            return Promise.reject(res.data.msg || '操作失败')
+                    }).catch(function(err){
+                        $eb.$swal('error',err);
+                    });
+                },{'title':'您确定通过？','text':'请谨慎操作！','confirm':'是的，我要通过'})
+                break;
+                case 'refuse':
+                var url =layList.U({a:'refuse',p:{id:data.id}});
+            
+                $eb.$swal('delete',function(){
+                    $eb.axios.get(url).then(function(res){
+                        if(1) {
+                            window.location.reload()
+                        }else
+                            return Promise.reject(res.data.msg || '操作失败')
+                    }).catch(function(err){
+                        $eb.$swal('error',err);
+                    });
+                },{'title':'您确定拒绝？','text':'请谨慎操作！','confirm':'是的，我要拒绝'})
                 break;
         }
     });

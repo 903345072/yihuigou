@@ -13,7 +13,7 @@ use crmeb\services\{JsonService,
     FormBuilder as Form,
     WechatTemplateService};
 use think\facade\Route as Url;
-
+use think\facade\Db;
 /**
  * 微信充值记录
  * Class UserRecharge
@@ -53,6 +53,33 @@ class UserRecharge extends AuthController
         if ($rechargInfo->paid) return JsonService::fail('已支付的订单记录无法删除');
         if (UserRechargeModel::del($id))
             return JsonService::successful('删除成功');
+        else
+            return JsonService::fail('删除失败');
+    }
+    
+    public function pass($id = 0)
+    {
+        if (!$id) return JsonService::fail('缺少参数');
+        $rechargInfo = UserRechargeModel::get($id);
+        UserRechargeModel::edit(["paid"=>1],$id);
+        $user = Db::table("eb_user")->where(["uid"=>$rechargInfo->uid])->find();
+        $res = Db::table("eb_user")->where(["uid"=>$rechargInfo->uid])->update(["now_money"=>$user['now_money']+$rechargInfo->price]);
+            $user = Db::table("eb_user")->where(["uid"=>$rechargInfo->uid])->find();
+        UserBill::income('充值',$rechargInfo->uid, 'now_money', 'recharge', $rechargInfo->price, $rechargInfo->order_id, $user['now_money'], '充值' . $rechargInfo->price . '元');
+        if ($res)
+            return JsonService::successful('操作成功');
+        else
+            return JsonService::fail('删除失败');
+    }
+    
+    public function refuse($id = 0)
+    {
+        if (!$id) return JsonService::fail('缺少参数');
+        $rechargInfo = UserRechargeModel::get($id);
+        $res = UserRechargeModel::edit(["paid"=>2],$id);
+       
+        if ($res)
+            return JsonService::successful('操作成功');
         else
             return JsonService::fail('删除失败');
     }

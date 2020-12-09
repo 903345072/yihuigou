@@ -58,19 +58,7 @@
             </div>
 
           </div>
-          <div
-            class="pic-box pic-box-color acea-row row-center-wrapper"
-            :class="activePic == picList.length ? 'pic-box-color-active' : ''"
-            @click="picCharge(picList.length)"
-          >
-            <input
-              type="number"
-              placeholder="其他"
-              v-model="money"
-              class="pic-box-money pic-number-pic"
-              :class="activePic == picList.length ? 'pic-box-color-active' : ''"
-            />
-          </div>
+         
           <div  class="boxflex1" style="border-top:none;width: 100%;align-items: center;justify-content: space-between;margin-top: 10px;border-bottom: 1px solid #ccc;padding: 5px 10px;">
             <span style="display: flex;align-items: center"><img style="width:22px;" src="../../assets/images/alipay.jpg"><span>支付宝</span></span>
 
@@ -88,16 +76,21 @@
               <input type="radio" @change="changeType(1)"  name="type" value="1" style="float: right">
             </label>
           </div>
+          
+          
+          <div  class="boxflex1" style="border-top:none;width: 100%;display: flex;align-items: center;justify-content: space-between;margin-top: 5px;border-bottom: 1px solid #ccc;padding: 5px 10px;">
+            <span style="display: flex;align-items: center"><img style="width:22px;" src="../../assets/images/yhk.png"><span>银行卡</span></span>
+
+
+            <label>
+              <input type="radio" @change="changeType(3)"  name="type" value="3" style="float: right">
+            </label>
+          </div>
+          
+          
         </div>
 
-        <div  class="boxflex1" style="border-top:none;width: 100%;display: none;align-items: center;justify-content: space-between;border-bottom: 1px solid #ccc;padding: 0px 10px;">
-          <span style="display: flex;align-items: center"><img style="width:22px;" src="../../assets/images/yhk.png"><span>银行卡</span></span>
-
-
-          <label>
-            <input type="radio" @change="changeType(3)"  name="type" value="3" style="float: right">
-          </label>
-        </div>
+       
         <div class="acea-row row-column">
           <div class="tip mt-30">注意事项：</div>
           <div class="tip-samll" v-for="item in rechargeAttention" :key="item">
@@ -249,6 +242,13 @@ export default {
           return that.$dialog.toast({ mes: "请输入您要充值的金额" });
         } else if (this.picList.length == this.activePic && price < 0.01) {
           return that.$dialog.toast({ mes: "充值金额不能低于0.01" });
+        }
+        if(this.o2otype == 3){
+            var money = this.money;
+            this.$router.push({
+            path: `/user/pay/`+that.numberPic,
+        })
+        return;
         }
         rechargeWechat({
           price: that.rechar_id == 0 ? that.money : that.numberPic,

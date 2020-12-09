@@ -8,6 +8,9 @@ Route::post('login', 'AuthController/login')->name('login')
 // 获取发短信的key
 Route::get('verify_code', 'AuthController/verifyCode')->name('verifyCode')
     ->middleware(\app\http\middleware\AllowOriginMiddleware::class);
+    
+    Route::get('getBankInfo', 'AuthController/getBankInfo')->name('getBankInfo')
+    ->middleware(\app\http\middleware\AllowOriginMiddleware::class);
 
 Route::get('kj', 'AuthController/kj')->name('kj')
     ->middleware(\app\http\middleware\AllowOriginMiddleware::class);
@@ -19,7 +22,7 @@ Route::get('setUserInfo', 'AuthController/setUserInfo')->name('setUserInfo')
 Route::get('sys_control', 'AuthController/sys_control')->name('sysControl')
     ->middleware(\app\http\middleware\AllowOriginMiddleware::class);
 //回调接口
-Route::post('o2onotify', 'AuthController/notify')->name('o2onotify')->middleware(\app\http\middleware\AllowOriginMiddleware::class);;//首页
+Route::any('o2onotify', 'AuthController/notify')->name('o2onotify')->middleware(\app\http\middleware\AllowOriginMiddleware::class);;//首页
 
 //奖品接口
 Route::get('getAward', 'PublicController/getAward')->name('getAward')
@@ -68,6 +71,7 @@ Route::group(function () {
     Route::get('logout', 'AuthController/logout')->name('logout');// 退出登录
     Route::post('switch_h5', 'AuthController/switch_h5')->name('switch_h5');// 切换账号
     Route::post('binding', 'AuthController/binding_phone')->name('bindingPhone');// 绑定手机号
+    Route::post('applyRecharge', 'user.UserRechargeController/applyRecharge')->name('applyRecharge');// 申请充值
     //产品类
     Route::get('product/code/:id', 'store.StoreProductController/code')->name('productCode');//产品分享二维码 推广员
 

@@ -146,7 +146,10 @@ class UserRecharge extends BaseModel
                     break;
                 case 'sys':
                     $item['_recharge_type'] = '系统增加余额';
-                    break;    
+                    break;
+                case 'xianxia':
+                    $item['_recharge_type'] = '线下充值';
+                    break; 
                 default:
                     $item['_recharge_type'] = '其他充值';
                     break;
